@@ -1,0 +1,53 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+import speedtest
+import threading
+from ttkthemes import ThemedStyle
+
+def medir_velocidad_de_internet():
+    def realizar_medicion():
+        st = speedtest.Speedtest()
+        st.get_best_server()  # Encuentra el mejor servidor para la prueba
+
+        descarga_speed = st.download() / 1024 / 1024  # Convertir bytes a megabits por segundo
+        carga_speed = st.upload() / 1024 / 1024  # Convertir bytes a megabits por segundo
+
+        resultados_text = (f"Velocidad de descarga: {descarga_speed:.2f} Mbps\n"
+                           f"Velocidad de carga: {carga_speed:.2f} Mbps")
+        resultados_label.config(text=resultados_text)
+
+    thread = threading.Thread(target=realizar_medicion)
+    thread.start()
+
+# Crear la ventana principal
+ventana = tk.Tk()
+ventana.title("Medidor de Velocidad de Internet")
+ventana.geometry("400x200")  # Tamaño de la ventana
+ventana.resizable(False, False)  # Evitar que se pueda cambiar el tamaño
+
+# Estilo de la interfaz gráfica
+style = ThemedStyle(ventana)
+style.set_theme("arc")  # Tema elegante y formal
+
+# Marco para organizar los elementos
+marco = ttk.Frame(ventana)
+marco.pack(pady=20)
+
+# Etiqueta de título
+titulo_label = ttk.Label(marco, text="Medidor de Velocidad de Internet", font=("Helvetica", 16))
+titulo_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+
+# Etiqueta para mostrar los resultados
+resultados_label = ttk.Label(marco, text="", font=("Helvetica", 12))
+resultados_label.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+
+# Botón para medir la velocidad
+medir_boton = ttk.Button(marco, text="Medir Velocidad", command=medir_velocidad_de_internet)
+medir_boton.grid(row=2, column=0, padx=10, pady=10)
+
+# Botón para salir
+salir_boton = ttk.Button(marco, text="Salir", command=ventana.quit)
+salir_boton.grid(row=2, column=1, padx=10, pady=10)
+
+ventana.mainloop()
